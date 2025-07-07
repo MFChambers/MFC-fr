@@ -137,25 +137,25 @@ df_2a
 ```
 
 In the second part, I made the filter a bit stricter by only including players with at least 10 at-bats. This helped bring out more reliable results. The top players now had averages between .571 and .643, with names like Manny Ny (1974) and Carson M. (2013) leading the list. These guys still had great seasons, but the extra filter helps avoid flukes.
-```{python}
-query_2b = """
-SELECT 
-    playerID, 
-    yearID, 
-    ROUND(CAST(H AS FLOAT)/AB, 3) AS batting_avg
-FROM 
-    Batting
-WHERE 
-    AB >= 10
-ORDER BY 
-    batting_avg DESC, playerID ASC
-LIMIT 5;
-"""
+# ```{python}
+#query_2b = """
+#SELECT 
+#    playerID, 
+#    yearID, 
+#    ROUND(CAST(H AS FLOAT)/AB, 3) AS batting_avg
+# FROM 
+#    Batting
+# WHERE 
+#    AB >= 10
+#ORDER BY 
+#    batting_avg DESC, playerID ASC
+#LIMIT 5;
+#"""
 
-df_2b = pd.read_sql_query(query_2b, con)
-df_2b
+# df_2b = pd.read_sql_query(query_2b, con)
+# df_2b
 
-```
+# ```
 
 For the third part, I calculated batting averages over entire careers by summing up all hits and at-bats for each player and then dividing. I also made sure to only include players with at least 100 at-bats total. The results brought out legends like Ty Cobb (.366), Rogers Hornsby (.358), and Joe Jackson (.356). These are the kind of averages that reflect long-term consistency, not just one standout season.
 ```{python}
