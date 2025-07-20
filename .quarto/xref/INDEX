@@ -1,0 +1,29 @@
+{
+  "250_Projects/project5.qmd": {
+    "project5.html": "60205c42"
+  },
+  "250_Projects/project4.qmd": {
+    "project4.html": "38c0bcab"
+  },
+  "250_Projects/project1.qmd": {
+    "project1.html": "20270edd"
+  },
+  "250_Projects/project3.qmd": {
+    "project3.html": "2a3409ac"
+  },
+  "Templates/ds250_project_template_clean.qmd": {
+    "ds250_project_template_clean.html": "c4da4d02"
+  },
+  "Templates/ds250_coding_challenge_template.qmd": {
+    "ds250_coding_challenge_template.html": "61b988ef"
+  },
+  "Templates/DS250_Template.qmd": {
+    "DS250_Template.html": "8d1cdade"
+  },
+  "250_projects.qmd": {
+    "250_projects.html": "76f68f59"
+  },
+  "index.qmd": {
+    "index.html": "7254f871"
+  }
+}
