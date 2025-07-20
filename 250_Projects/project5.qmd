@@ -53,6 +53,7 @@ __Shorten the column names and clean them up for easier use with pandas.__ Provi
 
 
 ```{python}
+#| label: load-data
 url = "https://raw.githubusercontent.com/fivethirtyeight/data/master/star-wars-survey/StarWars.csv"
 df = pd.read_csv(url, encoding="ISO-8859-1")
 
@@ -62,9 +63,10 @@ rename_map = {
     "Education": "education",
     "Household Income": "income"
 }
-df = df.rename(columns=rename_map)
-df.columns = df.columns.str.strip().str.replace(" ", "_").str.replace("?", "").str.lower()
+df.rename(columns=rename_map, inplace=True)
+df.columns = df.columns.str.strip().str.replace(" ", "_", regex=False).str.replace("?", "", regex=False).str.lower()
 df.head()
+
 
 ```
 
@@ -86,11 +88,13 @@ Geographic and cultural variables are captured and ready to be tested in your ma
 
 
 ```{python}
+# Filter out people who haven't seen any films
 df_seen = df[df["seen_any"].notna()].copy()
 
 ```
 
 ```{python}
+# Convert age to numeric midpoint
 age_map = {
     "18-29": 23.5,
     "30-44": 37,
@@ -100,9 +104,11 @@ age_map = {
 df_seen["age_num"] = df_seen["age"].map(age_map)
 df_seen.drop(columns="age", inplace=True)
 
+
 ```
 
 ```{python}
+# Convert education to numeric
 edu_map = {
     "Less than high school degree": 1,
     "High school degree": 2,
@@ -113,9 +119,11 @@ edu_map = {
 df_seen["education_num"] = df_seen["education"].map(edu_map)
 df_seen.drop(columns="education", inplace=True)
 
+
 ```
 
 ```{python}
+# Convert income to numeric midpoint
 income_map = {
     "Under $25,000": 12500,
     "$25,000 - $49,999": 37500,
@@ -129,18 +137,20 @@ df_seen.drop(columns="income", inplace=True)
 ```
 
 ```{python}
+# Create binary target variable
 df_seen["target"] = (df_seen["income_num"] > 50000).astype(int)
 
 ```
 
 ```{python}
-# Drop rows with missing key data
-df_seen = df_seen.dropna(subset=["age_num", "education_num", "income_num", "target"])
+# Drop rows with NA in essential columns
+df_seen.dropna(subset=["age_num", "education_num", "income_num", "target"], inplace=True)
 
-# One-hot encode object columns
+# One-hot encode remaining categoricals
 categorical_cols = df_seen.select_dtypes(include="object").columns
 df_final = pd.get_dummies(df_seen, columns=categorical_cols, drop_first=True)
 df_final.head()
+
 
 ```
 This table illustrates how survey responses were converted to numeric formats:
@@ -163,17 +173,15 @@ To validate the dataset against the original article, I recreated two visualizat
 
 
 ```{python}
-# Try to detect multiple episode-specific viewership columns
-seen_cols = [col for col in df.columns if "have_you_seen" in col and "episode" in col]
+# Try to detect viewership columns
+seen_cols = [col for col in df.columns if "seen" in col and "episode" in col]
 
 if seen_cols:
-    # Count "Yes" responses for each movie column
     movie_counts = df[seen_cols].apply(lambda col: col == "Yes").sum().sort_values()
     movie_counts.plot(kind="barh", title="Star Wars Movie Viewership", xlabel="Respondents")
     plt.tight_layout()
     plt.show()
 else:
-    # Fallback if only the summary column exists
     summary_col = "have_you_seen_any_of_the_6_films_in_the_star_wars_franchise"
     if summary_col in df.columns:
         df[summary_col].value_counts().plot(
@@ -183,28 +191,20 @@ else:
         plt.show()
     else:
         print("Movie viewership columns not found.")
-        print([col for col in df.columns if "seen" in col or "star_wars" in col])
 
 ```
 
 ```{python}
-import matplotlib.pyplot as plt
-
-# Find all columns related to character favorability
+# Most disliked characters
 char_cols = [col for col in df.columns if "unfavorably" in col or "character" in col]
 
 if char_cols:
-    # Count "Very unfavorably" votes across all relevant columns
     char_votes = df[char_cols].apply(lambda col: col.value_counts().get("Very unfavorably", 0))
-
-    # Clean up column names into readable character names
     clean_labels = [
         col.split("with_")[-1].replace("_", " ").replace(".", "").title()
         for col in char_votes.index
     ]
     char_votes.index = clean_labels
-
-    # Sort and plot
     char_votes.sort_values().plot(
         kind="barh", figsize=(8, 6), title="Most Disliked Star Wars Characters", color="steelblue"
     )
@@ -213,10 +213,8 @@ if char_cols:
     plt.tight_layout()
     plt.show()
 else:
-    print("Disliked character columns not found. The dataset version may not include them.")
+    print("Disliked character columns not found.")
 
-# Helpful debug: show star wars–related columns
-print([col for col in df.columns if "star_wars" in col])
 
 ```
 
@@ -226,7 +224,6 @@ __Build a machine learning model that predicts whether a person makes more than 
 
 To predict whether a respondent earns more than $50,000 annually, I trained a Random Forest Classifier using the cleaned and preprocessed Star Wars survey dataset. The features included age, education level, income, and one-hot encoded responses to various Star Wars-related survey questions. The model achieved an accuracy of 75.71%, significantly outperforming the initial 62% estimate mentioned in the planning stage. The classification report shows a strong ability to correctly identify high-income earners (target = 1), with a precision of 0.76, recall of 0.98, and f1-score of 0.86. While the model struggles more with predicting low-income respondents (target = 0), the overall performance indicates that demographic and cultural preferences in the dataset contain meaningful patterns associated with income.
 ```{python}
-# define features and target
 X = df_final.drop(columns=["income_num", "target"])
 y = df_final["target"]
 
@@ -239,6 +236,7 @@ y_pred = model.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Random Forest accuracy: {accuracy:.2%}")
 print(classification_report(y_test, y_pred))
+
 ```
 
 ---
@@ -255,6 +253,7 @@ model2.fit(X_train, y_train)
 preds2 = model2.predict(X_test)
 acc2 = accuracy_score(y_test, preds2)
 print(f"Improved Random Forest accuracy: {acc2:.2%}")
+
 
 ```
 
@@ -284,16 +283,12 @@ To prepare the dataset for machine learning, I converted the categorical locatio
 
 ```{python}
 if "location_(census_region)" in df_seen.columns:
-    # Convert location to categorical codes
     df_seen["location_num"] = df_seen["location_(census_region)"].astype("category").cat.codes
-    
-    # Drop original column
     df_seen.drop(columns="location_(census_region)", inplace=True)
-    
-    # Preview result
     print(df_seen[["location_num"]].head())
 else:
     print("Location column not found.")
+
 
 ```
 
