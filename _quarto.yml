@@ -34,25 +34,41 @@ website:
         - text: "DS250 Projects"
           file: 250_projects.qmd
         - text: "---"
+        - text: "Project 1"
+          file: 250_Projects/project1.qmd
+        - text: "Project 2"
+          file: 250_Projects/project2.qmd
         - text: "Project 3"
           file: 250_Projects/project3.qmd
-        - text: "---"
         - text: "Project 4"
           file: 250_Projects/project4.qmd
-        - text: "---"
         - text: "Project 5"
           file: 250_Projects/project5.qmd
         - text: "---"
 
 format:  
   html:
-    theme: #see this link to customize the theme with css (https://quarto.org/docs/output-formats/html-themes.html#dark-mode)
-      light: flatly # more themes can be found [here](https://quarto.org/docs/output-formats/html-themes.html)
-      dark: darkly
-      #light: cosmo
-      #dark: [cosmo, theme-dark.scss]
-    css: styles.css
+    theme:
+      light: [flatly, theme.scss]       # light mode (customizable)
+      dark: [darkly, theme-dark.scss]   # dark mode (fully customized)
+    css: styles.css                     # optional custom tweaks
     toc: true
+    code-copy: true
+    respect-user-color-scheme: true
+    toc-depth: 2
+    toc-title: "Table of Contents"
+    toc-show: true
+    toc-float: true
+    toc-float-offset: 100
+    toc-float-width: 300
+    toc-float-position: right
+    toc-float-breakpoint: 768
+    toc-float-scroll: true
+    toc-float-scroll-offset: 50
+    toc-float-scroll-duration: 300
+    toc-float-scroll-easing: ease-in-out
+    toc-float-scroll-target: "#toc"
 
-
-
+include-in-header:
+  - text: |
+      <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
