@@ -24,9 +24,6 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install jupyter numpy pandas scikit-learn lets-plot palmerpenguins nbformat nbclient tabulate skimpy seaborn matplotlib kaleido graphviz xgboost
-        # 🟩 Add graphviz to pip install line
-
-      # 🟩 Add this step to install the system Graphviz tool
       - name: Install Graphviz system tool
         run: sudo apt-get update && sudo apt-get install -y graphviz
 
