@@ -5,9 +5,9 @@ website:
   title: "Maia Faith Chambers - Data Science Portfolio"
   favicon: Images/favicon.png
   back-to-top-navigation: true
-site-url: https://MFChambers.github.io/MFC-fr/
-repo-url: https://github.com/MFChambers/MFC-fr
-issue-url: https://github.com/MFChambers/MFC-fr/issues/new
+  site-url: https://MFChambers.github.io/MFC-fr/
+  repo-url: https://github.com/MFChambers/MFC-fr
+  issue-url: https://github.com/MFChambers/MFC-fr/issues/new
   repo-actions: [issue]
 
   page-footer: 
