@@ -36,8 +36,6 @@ website:
         - text: "---"
         - text: "Project 1"
           file: 250_Projects/project1.qmd
-        - text: "Project 2"
-          file: 250_Projects/project2.qmd
         - text: "Project 3"
           file: 250_Projects/project3.qmd
         - text: "Project 4"
